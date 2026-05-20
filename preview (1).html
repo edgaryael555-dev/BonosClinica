@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Bono Mensual Integral | Clínica Hiperbárica Colibrí</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --paper:#ffffff;
+      --ink:#172033;
+      --muted:#5c667a;
+      --soft:#e9eef6;
+      --line:#dce3ef;
+      --blue:#315fba;
+      --blue2:#7aa7ff;
+      --cyan:#56c8e8;
+      --green:#36b37e;
+      --amber:#ffb020;
+      --red:#ef5b5b;
+      --shadow:0 18px 60px rgba(23,32,51,.12);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box}
+
+    html{
+      scroll-behavior:smooth;
+      background:var(--bg);
+    }
+
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(86,200,232,.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(49,95,186,.16), transparent 30%),
+        var(--bg);
+    }
+
+    .deck{
+      width:100%;
+      min-height:72vh;
+    }
+
+    .topbar{
+      position:fixed;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(1120px, calc(100% - 32px));
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.75);
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(18px);
+      border-radius:999px;
+      box-shadow:0 12px 32px rgba(23,32,51,.08);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:760;
+      letter-spacing:-.02em;
+      font-size:14px;
+      white-space:nowrap;
+    }
+
+    .brand-mark{
+      width:32px;
+      height:32px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      color:#fff;
+      background:linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow:0 8px 20px rgba(49,95,186,.24);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .nav a, .print-btn{
+      text-decoration:none;
+      border:0;
+      color:var(--muted);
+      font-size:12px;
+      padding:8px 11px;
+      border-radius:999px;
+      background:transparent;
+      cursor:pointer;
+    }
+
+    .nav a:hover, .print-btn:hover{
+      color:var(--ink);
+      background:var(--soft);
+    }
+
+    .progress{
+      position:fixed;
+      top:0;
+      left:0;
+      height:4px;
+      width:0%;
+      background:linear-gradient(90deg, var(--blue), var(--cyan));
+      z-index:30;
+    }
+
+    section.slide{
+      min-height:72vh;
+      width:min(1180px, calc(100% - 36px));
+      margin:0 auto;
+      display:grid;
+      align-items:center;
+      padding:86px 0 26px;
+      scroll-snap-align:start;
+    }
+
+    .card{
+      min-height:540px;
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .card-inner{
+      height:100%;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:26px;
+      padding:42px;
+      position:relative;
+      z-index:2;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:auto -80px -120px auto;
+      width:360px;
+      height:360px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(86,200,232,.22), transparent 65%);
+      z-index:1;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#edf5ff;
+      color:#315fba;
+      font-weight:760;
+      font-size:13px;
+      margin-bottom:18px;
+    }
+
+    h1,h2,h3,p{margin:0}
+
+    h1{
+      font-size:clamp(44px,6vw,76px);
+      line-height:.98;
+      letter-spacing:-.065em;
+      max-width:850px;
+    }
+
+    h2{
+      font-size:clamp(34px,4.5vw,56px);
+      line-height:1.02;
+      letter-spacing:-.055em;
+      max-width:760px;
+    }
+
+    h3{
+      font-size:24px;
+      letter-spacing:-.035em;
+      margin-bottom:10px;
+    }
+
+    .lead{
+      font-size:21px;
+      line-height:1.45;
+      color:var(--muted);
+      margin-top:24px;
+      max-width:690px;
+    }
+
+    .body{
+      font-size:18px;
+      line-height:1.55;
+      color:var(--muted);
+      max-width:680px;
+    }
+
+    .mini{
+      font-size:14px;
+      line-height:1.5;
+      color:var(--muted);
+    }
+
+    .title-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:22px;
+      margin-bottom:32px;
+    }
+
+    .slide-number{
+      color:#9aa5b8;
+      font-weight:720;
+      font-size:14px;
+      white-space:nowrap;
+      padding-top:10px;
+    }
+
+    .hero-visual, .visual{
+      min-height:340px;
+      border-radius:26px;
+      background:
+        linear-gradient(135deg, rgba(49,95,186,.12), rgba(86,200,232,.13)),
+        #f8fbff;
+      border:1px solid #e5ecf7;
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      padding:30px;
+    }
+
+    .hero-visual svg, .visual svg{
+      width:100%;
+      max-width:450px;
+      height:auto;
+      filter:drop-shadow(0 22px 28px rgba(23,32,51,.12));
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:28px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:#f1f5fb;
+      color:#3a4356;
+      font-size:14px;
+      font-weight:650;
+    }
+
+    .metric-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin-top:34px;
+    }
+
+    .metric{
+      padding:22px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:#fff;
+    }
+
+    .metric .big{
+      font-size:38px;
+      line-height:1;
+      font-weight:850;
+      letter-spacing:-.05em;
+      margin-bottom:10px;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-top:30px;
+    }
+
+    .info-box{
+      padding:24px;
+      border-radius:24px;
+      background:#f8fbff;
+      border:1px solid #e3ebf7;
+    }
+
+    .info-box strong{
+      color:var(--ink);
+    }
+
+    .category-list{
+      display:grid;
+      gap:11px;
+      margin-top:24px;
+    }
+
+    .category{
+      display:grid;
+      grid-template-columns:54px 1fr 72px;
+      align-items:center;
+      gap:14px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:20px;
+    }
+
+    a.category{
+      color:inherit;
+      text-decoration:none;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    a.category:hover{
+      transform:translateY(-2px);
+      box-shadow:0 14px 32px rgba(23,32,51,.10);
+      border-color:#c8d8f3;
+    }
+
+    .icon{
+      width:42px;
+      height:42px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      font-size:21px;
+      background:#eef5ff;
+    }
+
+    .category h4{
+      margin:0;
+      font-size:17px;
+      letter-spacing:-.02em;
+    }
+
+    .category p{
+      margin:3px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .weight{
+      justify-self:end;
+      font-size:20px;
+      font-weight:840;
+      color:var(--blue);
+    }
+
+    .steps{
+      display:grid;
+      gap:15px;
+      margin-top:26px;
+    }
+
+    .step{
+      display:grid;
+      grid-template-columns:46px 1fr;
+      gap:16px;
+      align-items:start;
+      padding:18px;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+
+    .step-num{
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-weight:830;
+      background:linear-gradient(135deg, var(--blue), var(--cyan));
+    }
+
+    .callout{
+      margin-top:28px;
+      padding:22px 24px;
+      border-radius:24px;
+      background:linear-gradient(135deg, #edf5ff, #f6fbff);
+      border:1px solid #dceaff;
+      font-size:18px;
+      line-height:1.45;
+      color:#30405c;
+    }
+
+    .formula{
+      margin-top:26px;
+      padding:26px;
+      border-radius:26px;
+      background:#172033;
+      color:#fff;
+      font-size:24px;
+      line-height:1.35;
+      letter-spacing:-.03em;
+      font-weight:780;
+      box-shadow:0 18px 40px rgba(23,32,51,.18);
+    }
+
+    .formula span{
+      color:#9de7ff;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background:#fff;
+      margin-top:26px;
+    }
+
+    th,td{
+      text-align:left;
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      font-size:15px;
+    }
+
+    th{
+      background:#f4f7fc;
+      color:#44506a;
+      font-weight:760;
+    }
+
+    tr:last-child td{border-bottom:0}
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      border-radius:999px;
+      padding:7px 10px;
+      background:#eef7f1;
+      color:#237456;
+      font-size:13px;
+      font-weight:720;
+    }
+
+    .timeline{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-top:28px;
+    }
+
+    .time-card{
+      min-height:150px;
+      padding:20px;
+      border-radius:24px;
+      background:#fff;
+      border:1px solid var(--line);
+      position:relative;
+    }
+
+    .time-card::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:20px;
+      width:42px;
+      height:4px;
+      border-radius:0 0 999px 999px;
+      background:linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .small-title{
+      font-size:15px;
+      font-weight:810;
+      color:var(--ink);
+      margin-bottom:8px;
+    }
+
+    .footer-note{
+      position:absolute;
+      bottom:24px;
+      left:58px;
+      right:58px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:#96a1b5;
+      z-index:3;
+    }
+
+    .center-only{
+      display:grid;
+      grid-template-columns:1fr;
+      text-align:center;
+      place-items:center;
+    }
+
+    .center-only .lead{
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    .closing{
+      max-width:860px;
+    }
+
+    .quote{
+      font-size:clamp(32px,4.2vw,58px);
+      line-height:1.08;
+      letter-spacing:-.055em;
+      font-weight:830;
+      margin-top:20px;
+    }
+
+    .logo-large{
+      width:94px;
+      height:94px;
+      display:grid;
+      place-items:center;
+      border-radius:28px;
+      margin:0 auto 24px;
+      color:#fff;
+      font-size:48px;
+      background:linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow:0 20px 50px rgba(49,95,186,.25);
+    }
+
+    .mobile-note{
+      display:none;
+    }
+
+    @media (max-width: 920px){
+      .topbar{
+        top:10px;
+        border-radius:22px;
+        align-items:flex-start;
+      }
+      .nav{
+        display:none;
+      }
+      section.slide{
+        width:calc(100% - 24px);
+        padding:74px 0 18px;
+      }
+      .card{min-height:auto}
+      .card-inner{
+        grid-template-columns:1fr;
+        padding:34px 24px 72px;
+      }
+      .hero-visual, .visual{min-height:260px}
+      .metric-grid, .split, .timeline{
+        grid-template-columns:1fr;
+      }
+      .title-row{
+        flex-direction:column;
+        gap:8px;
+      }
+      .footer-note{
+        left:24px;
+        right:24px;
+      }
+      .category{
+        grid-template-columns:45px 1fr 58px;
+      }
+      .mobile-note{display:block}
+    }
+
+    @media print{
+      body{background:#fff}
+      .topbar,.progress{display:none}
+      section.slide{
+        min-height:100vh;
+        width:100%;
+        padding:0;
+        page-break-after:always;
+      }
+      .card{
+        min-height:100vh;
+        border-radius:0;
+        box-shadow:none;
+        border:0;
+      }
+      .card-inner{padding:52px}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">✦</div>
+      Clínica Hiperbárica Colibrí
+    </div>
+    <nav class="nav">
+      <a href="#inicio">Inicio</a>
+      <a href="#estructura">Estructura</a>
+      <a href="#categorias">Categorías</a>
+      <a href="#ventas">Detalle</a>
+      <a href="#gestion">Gestión</a>
+      <button class="print-btn" onclick="window.print()">Imprimir / PDF</button>
+    </nav>
+  </header>
+
+  <main class="deck">
+
+    <section class="slide" id="inicio">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="eyebrow">Nuevo sistema interno · Bono mensual</div>
+            <h1>Sistema de Bono Mensual Integral</h1>
+            <p class="lead">
+              Una forma más clara, justa y ordenada de reconocer el compromiso, la constancia y el desempeño de cada integrante del equipo.
+            </p>
+            <div class="pill-row">
+              <span class="pill">✅ 15% de bono mensual</span>
+              <span class="pill">📋 Reglas claras</span>
+              <span class="pill">📈 Enfoque en crecimiento</span>
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="Ilustración de bono mensual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="78" y="86" width="364" height="238" rx="34" fill="white"/>
+              <rect x="106" y="124" width="160" height="16" rx="8" fill="#CFE0FF"/>
+              <rect x="106" y="158" width="238" height="12" rx="6" fill="#E7EEF9"/>
+              <rect x="106" y="184" width="210" height="12" rx="6" fill="#E7EEF9"/>
+              <circle cx="354" cy="219" r="64" fill="#315FBA"/>
+              <path d="M331 219l16 16 35-39" stroke="white" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M136 272h248" stroke="#56C8E8" stroke-width="14" stroke-linecap="round"/>
+              <circle cx="96" cy="82" r="30" fill="#56C8E8" opacity=".8"/>
+              <circle cx="426" cy="333" r="42" fill="#7AA7FF" opacity=".55"/>
+              <path d="M430 72c28 17 44 44 44 75" stroke="#56C8E8" stroke-width="10" stroke-linecap="round" opacity=".6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="footer-note"><span>Presentación para equipo interno</span><span>01 / 16</span></div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Objetivo</div>
+                <h2>¿Por qué cambiamos el sistema?</h2>
+              </div>
+              <div class="slide-number">02 / 16</div>
+            </div>
+            <p class="body">
+              Queremos que el bono sea más transparente, medible y fácil de entender. El objetivo no es castigar, sino reconocer el buen desempeño y mantener una operación profesional.
+            </p>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div><h3>Más claridad</h3><p class="mini">Cada persona sabrá exactamente qué se evalúa y cómo conservar su bono.</p></div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div><h3>Más orden</h3><p class="mini">Se revisarán puntos clave durante el mes, no solamente al final.</p></div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div><h3>Más crecimiento</h3><p class="mini">Cuando la clínica mejora, también se abren mejores oportunidades para todos.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="98" y="76" width="324" height="268" rx="36" fill="white"/>
+              <path d="M156 286V174" stroke="#315FBA" stroke-width="34" stroke-linecap="round"/>
+              <path d="M260 286V132" stroke="#56C8E8" stroke-width="34" stroke-linecap="round"/>
+              <path d="M364 286V212" stroke="#7AA7FF" stroke-width="34" stroke-linecap="round"/>
+              <path d="M126 302h268" stroke="#DCE3EF" stroke-width="12" stroke-linecap="round"/>
+              <circle cx="156" cy="174" r="20" fill="#315FBA"/>
+              <circle cx="260" cy="132" r="20" fill="#56C8E8"/>
+              <circle cx="364" cy="212" r="20" fill="#7AA7FF"/>
+              <path d="M154 173l106-41 104 80" stroke="#172033" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".22"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Monto del bono</div>
+                <h2>El bono mensual será del 15% del sueldo</h2>
+              </div>
+              <div class="slide-number">03 / 16</div>
+            </div>
+            <p class="body">
+              Cada colaborador tendrá un bono objetivo mensual equivalente al 15% de su nómina mensual. Este bono se divide en categorías de desempeño.
+            </p>
+            <div class="formula">
+              Bono mensual objetivo = <span>Sueldo mensual × 15%</span>
+            </div>
+            <table>
+              <thead>
+                <tr><th>Sueldo mensual</th><th>Bono máximo mensual</th><th>Total potencial</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>$10,000 MXN</td><td>$1,500 MXN</td><td>$11,500 MXN</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">
+              El bono se entregará del <strong>día 1 al día 4 de cada mes</strong>, para dar tiempo a cerrar las revisiones, validar evidencias y calcular correctamente los resultados del mes anterior.
+            </div>
+            <div class="callout">
+              Los porcentajes pueden ajustarse dependiendo del puesto, responsabilidades o necesidades operativas. También podrán agregarse nuevas categorías específicas para ciertas personas o funciones.
+            </div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="260" cy="210" r="132" fill="white"/>
+              <circle cx="260" cy="210" r="94" stroke="#315FBA" stroke-width="34" stroke-linecap="round"/>
+              <path d="M260 116a94 94 0 0 1 81 142" stroke="#56C8E8" stroke-width="34" stroke-linecap="round"/>
+              <text x="260" y="205" text-anchor="middle" font-size="64" font-weight="800" fill="#172033">15%</text>
+              <text x="260" y="242" text-anchor="middle" font-size="22" fill="#5C667A">bono mensual</text>
+              <circle cx="385" cy="112" r="30" fill="#56C8E8" opacity=".7"/>
+              <circle cx="120" cy="304" r="42" fill="#7AA7FF" opacity=".35"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="estructura">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Idea central</div>
+                <h2>El bono inicia completo y se conserva con cumplimiento</h2>
+              </div>
+              <div class="slide-number">04 / 16</div>
+            </div>
+            <p class="body">
+              Al inicio de cada mes, cada colaborador comienza con el 100% de su bono asignado. Durante el mes se conserva o se pierde parcialmente según el cumplimiento de cada categoría.
+            </p>
+            <div class="split">
+              <div class="info-box">
+                <h3>✅ Se conserva</h3>
+                <p class="mini">Cuando se cumplen las reglas de imagen, registros, atención, puntualidad, reseñas y desempeño general.</p>
+              </div>
+              <div class="info-box">
+                <h3>⚠️ Se descuenta</h3>
+                <p class="mini">Cuando hay incumplimientos claros, registros faltantes, descuidos relevantes o falta de seguimiento.</p>
+              </div>
+            </div>
+            <div class="callout">
+              La intención es que todos tengan claridad desde el inicio del mes y puedan cuidar su bono con acciones concretas. El pago se realizará del día 1 al día 4 del mes siguiente.
+            </div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="98" y="78" width="324" height="264" rx="36" fill="white"/>
+              <path d="M158 146h204" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <path d="M158 202h204" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <path d="M158 258h204" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <circle cx="158" cy="146" r="22" fill="#36B37E"/>
+              <path d="M148 146l7 7 15-18" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="158" cy="202" r="22" fill="#36B37E"/>
+              <path d="M148 202l7 7 15-18" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="158" cy="258" r="22" fill="#FFB020"/>
+              <path d="M150 250l18 18M168 250l-18 18" stroke="white" stroke-width="7" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="categorias">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Distribución</div>
+                <h2>Las 7 categorías del bono</h2>
+              </div>
+              <div class="slide-number">05 / 16</div>
+            </div>
+            <p class="body">
+              El bono se divide en áreas clave para mantener una clínica ordenada, profesional y enfocada en el paciente.
+            </p>
+            <div class="category-list">
+              <a class="category" href="#ventas"><div class="icon">📈</div><div><h4>Ventas de la sucursal</h4><p>Cumplimiento de la meta mensual.</p></div><div class="weight">20%</div></a>
+              <a class="category" href="#uniforme"><div class="icon">🧥</div><div><h4>Uniforme e imagen</h4><p>Presentación profesional y uniforme completo.</p></div><div class="weight">10%</div></a>
+              <a class="category" href="#registros"><div class="icon">📁</div><div><h4>Registros y archivos</h4><p>Expedientes, controles y notas completas.</p></div><div class="weight">20%</div></a>
+              <a class="category" href="#resenas"><div class="icon">⭐</div><div><h4>Calificaciones y reseñas</h4><p>Mínimo 3 reseñas mensuales.</p></div><div class="weight">15%</div></a>
+            </div>
+          </div>
+          <div>
+            <div class="category-list" style="margin-top:88px">
+              <a class="category" href="#puntualidad"><div class="icon">⏱️</div><div><h4>Puntualidad y asistencia</h4><p>Responsabilidad con horarios y presencia.</p></div><div class="weight">10%</div></a>
+              <a class="category" href="#proactividad"><div class="icon">🤝</div><div><h4>Proactividad y apoyo</h4><p>Actitud, iniciativa y trabajo en equipo.</p></div><div class="weight">15%</div></a>
+              <a class="category" href="#atencion"><div class="icon">💙</div><div><h4>Calidad de atención</h4><p>Trato, seguimiento y servicio al paciente.</p></div><div class="weight">10%</div></a>
+            </div>
+            <div class="callout">
+              Total del sistema: <strong>100% del bono mensual</strong>. Estos porcentajes podrán ajustarse según puesto, responsabilidades o categorías específicas.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="slide" id="ventas">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 1 · 20%</div><h2>Ventas de la sucursal</h2></div>
+              <div class="slide-number">06 / 16</div>
+            </div>
+            <p class="body">Esta categoría se calcula con base en la meta mensual de ventas de cada sucursal. El objetivo se definirá en la base de datos y se actualizará diariamente, para que el equipo pueda consultar en todo momento cómo va el avance del mes.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Cómo se evalúa</th></tr></thead>
+              <tbody>
+                <tr><td>Meta mensual</td><td>Se define en la base de datos para cada sucursal.</td></tr>
+                <tr><td>Cumplimiento proporcional</td><td>Si la sucursal logra 90% de la meta, se conserva 90% de esta categoría.</td></tr>
+                <tr><td>Actualización diaria</td><td>El avance se actualiza todos los días para poder consultarlo durante el mes.</td></tr>
+                <tr><td>Responsabilidad compartida</td><td>Aplica a todo el equipo de la sucursal.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Objetivo: que todos puedan ver el avance diario, dar seguimiento oportuno y ayudar a cumplir la meta mensual.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="76" y="96" width="368" height="228" rx="34" fill="white"/>
+              <path d="M124 274c46-42 79-30 116-72 39-45 81-38 156-92" stroke="#315FBA" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M363 110h33v33" stroke="#315FBA" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="128" y="232" width="42" height="52" rx="12" fill="#CFE0FF"/>
+              <rect x="202" y="194" width="42" height="90" rx="12" fill="#7AA7FF"/>
+              <rect x="276" y="154" width="42" height="130" rx="12" fill="#56C8E8"/>
+              <rect x="350" y="124" width="42" height="160" rx="12" fill="#315FBA"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="uniforme">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 2 · 10%</div><h2>Uniforme e imagen profesional</h2></div>
+              <div class="slide-number">07 / 16</div>
+            </div>
+            <p class="body">La imagen del equipo transmite orden, confianza y profesionalismo. Esta categoría se evaluará con revisiones aleatorias durante el mes.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Qué se revisa</th></tr></thead>
+              <tbody>
+                <tr><td>Uniforme completo</td><td>Uso correcto del uniforme definido por la clínica.</td></tr>
+                <tr><td>Limpieza y presentación</td><td>Uniforme limpio, cuidado personal e imagen profesional.</td></tr>
+                <tr><td>Orden visual</td><td>Presentarse de forma adecuada frente a pacientes y familiares.</td></tr>
+                <tr><td>Frecuencia</td><td>3 revisiones aleatorias al mes, sin previo aviso.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Si en una revisión aleatoria no se cumple, se puede perder esta categoría del bono.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="150" y="80" width="220" height="270" rx="38" fill="white"/>
+              <path d="M206 92l54 64 54-64" stroke="#315FBA" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M188 174h144M188 218h144M188 262h92" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <circle cx="374" cy="106" r="36" fill="#56C8E8"/>
+              <path d="M358 106l11 11 24-30" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="registros">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 3 · 20%</div><h2>Registros y archivos</h2></div>
+              <div class="slide-number">08 / 16</div>
+            </div>
+            <p class="body">Esta es una de las categorías más importantes. Una clínica ordenada necesita registros completos, claros y actualizados.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Qué se evalúa</th></tr></thead>
+              <tbody>
+                <tr><td>Expedientes</td><td>Que estén completos, actualizados y correctamente llenados.</td></tr>
+                <tr><td>Controles internos</td><td>Registros de sesiones, pagos, seguimientos, notas y formatos.</td></tr>
+                <tr><td>Errores graves</td><td>Faltantes, descuadres importantes o información incorrecta.</td></tr>
+                <tr><td>Frecuencia</td><td>3 auditorías aleatorias al mes.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Un error grave o falta de registro puede generar la pérdida de esta categoría.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="114" y="86" width="292" height="248" rx="34" fill="white"/>
+              <path d="M154 148h212M154 198h212M154 248h148" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <circle cx="154" cy="148" r="12" fill="#315FBA"/>
+              <circle cx="154" cy="198" r="12" fill="#56C8E8"/>
+              <circle cx="154" cy="248" r="12" fill="#36B37E"/>
+              <rect x="330" y="286" width="92" height="64" rx="20" fill="#315FBA"/>
+              <path d="M352 318l16 16 32-40" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="resenas">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 4 · 15%</div><h2>Calificaciones y reseñas</h2></div>
+              <div class="slide-number">09 / 16</div>
+            </div>
+            <p class="body">La meta es mantener activo el hábito de solicitar reseñas a pacientes satisfechos. No se trata de presionar, sino de pedir apoyo de manera amable y constante.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Cómo se evalúa</th></tr></thead>
+              <tbody>
+                <tr><td>Meta mínima</td><td>Al menos 3 reseñas/calificaciones por colaborador al mes.</td></tr>
+                <tr><td>Calidad</td><td>Deben ser reseñas reales de pacientes o familiares atendidos.</td></tr>
+                <tr><td>Seguimiento</td><td>Se revisará avance durante el mes para evitar dejarlo al final.</td></tr>
+                <tr><td>Incumplimiento</td><td>Si no se alcanza la meta mínima, se pierde esta categoría.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Objetivo: fortalecer la reputación digital de la clínica y generar más confianza en nuevos pacientes.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="108" y="106" width="304" height="208" rx="34" fill="white"/>
+              <path d="M260 134l20 42 46 7-33 32 8 46-41-22-41 22 8-46-33-32 46-7 20-42z" fill="#FFB020"/>
+              <path d="M158 286h204" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <circle cx="126" cy="92" r="24" fill="#56C8E8" opacity=".8"/>
+              <circle cx="400" cy="318" r="36" fill="#315FBA" opacity=".25"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="puntualidad">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 5 · 10%</div><h2>Puntualidad y asistencia</h2></div>
+              <div class="slide-number">10 / 16</div>
+            </div>
+            <p class="body">La puntualidad permite que la operación fluya, que los pacientes reciban atención a tiempo y que el equipo no se sobrecargue.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Qué se considera</th></tr></thead>
+              <tbody>
+                <tr><td>Puntualidad</td><td>Llegar a tiempo al inicio de jornada y actividades asignadas.</td></tr>
+                <tr><td>Asistencia</td><td>Cumplir los días y horarios establecidos.</td></tr>
+                <tr><td>Avisos</td><td>Comunicar imprevistos con la mayor anticipación posible.</td></tr>
+                <tr><td>Revisión</td><td>Control mensual con registros de asistencia, retardos y ausencias.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Retardos, faltas injustificadas o salidas no autorizadas pueden afectar esta categoría.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="260" cy="210" r="126" fill="white"/>
+              <circle cx="260" cy="210" r="86" stroke="#E7EEF9" stroke-width="18"/>
+              <path d="M260 158v58l42 28" stroke="#315FBA" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="260" cy="210" r="13" fill="#56C8E8"/>
+              <path d="M168 94l-36 36M352 94l36 36" stroke="#56C8E8" stroke-width="14" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="proactividad">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 6 · 15%</div><h2>Proactividad y apoyo operativo</h2></div>
+              <div class="slide-number">11 / 16</div>
+            </div>
+            <p class="body">Esta categoría reconoce la actitud diaria: apoyar al equipo, anticiparse a problemas y resolver sin esperar a que todo se indique.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Qué se evalúa</th></tr></thead>
+              <tbody>
+                <tr><td>Iniciativa</td><td>Detectar pendientes y ayudar a resolverlos.</td></tr>
+                <tr><td>Trabajo en equipo</td><td>Apoyar a compañeros y mantener buena comunicación.</td></tr>
+                <tr><td>Actitud</td><td>Disposición, respeto y colaboración durante el mes.</td></tr>
+                <tr><td>Evaluación</td><td>Revisión mensual con observaciones de situaciones concretas.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Se tomará en cuenta el comportamiento constante, no un solo día aislado.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="190" cy="172" r="54" fill="white"/>
+              <circle cx="330" cy="172" r="54" fill="white"/>
+              <path d="M126 284c20-68 108-68 128 0" stroke="#315FBA" stroke-width="24" stroke-linecap="round"/>
+              <path d="M266 284c20-68 108-68 128 0" stroke="#56C8E8" stroke-width="24" stroke-linecap="round"/>
+              <path d="M226 222c24 22 44 22 68 0" stroke="#36B37E" stroke-width="14" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="atencion">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div><div class="eyebrow">Categoría 7 · 10%</div><h2>Calidad de atención al paciente</h2></div>
+              <div class="slide-number">12 / 16</div>
+            </div>
+            <p class="body">El trato al paciente es una prioridad. Esta categoría busca cuidar la experiencia, la comunicación y el seguimiento de cada persona que llega a la clínica.</p>
+            <table>
+              <thead><tr><th>Criterio</th><th>Qué se evalúa</th></tr></thead>
+              <tbody>
+                <tr><td>Trato</td><td>Amabilidad, respeto, paciencia y profesionalismo.</td></tr>
+                <tr><td>Seguimiento</td><td>Responder dudas, orientar y comunicar pendientes.</td></tr>
+                <tr><td>Quejas válidas</td><td>Se revisarán situaciones reportadas por pacientes o familiares.</td></tr>
+                <tr><td>Evaluación</td><td>Observación mensual, retroalimentación y evidencia cuando aplique.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">Una queja importante y válida puede afectar esta categoría, especialmente si refleja falta de atención o mala actitud.</div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="112" y="98" width="296" height="224" rx="44" fill="white"/>
+              <path d="M260 280s-88-48-88-108c0-31 24-54 54-54 18 0 30 9 34 18 4-9 16-18 34-18 30 0 54 23 54 54 0 60-88 108-88 108z" fill="#56C8E8"/>
+              <path d="M222 198h76M260 160v76" stroke="white" stroke-width="16" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="gestion">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Gestión mensual</div>
+                <h2>¿Cómo se llevará el control?</h2>
+              </div>
+              <div class="slide-number">13 / 16</div>
+            </div>
+            <p class="body">
+              El sistema se administrará con revisiones durante el mes, evidencia y comunicación clara. Así evitamos dudas al cierre.
+            </p>
+            <div class="timeline">
+              <div class="time-card"><div class="small-title">Semana 1</div><p class="mini">Inicio del mes, comunicación de meta y recordatorio de reglas.</p></div>
+              <div class="time-card"><div class="small-title">Semana 2</div><p class="mini">Primeras revisiones aleatorias de imagen, registros o seguimiento.</p></div>
+              <div class="time-card"><div class="small-title">Semana 3</div><p class="mini">Revisión de avance en reseñas, ventas y pendientes importantes.</p></div>
+              <div class="time-card"><div class="small-title">Cierre</div><p class="mini">Cálculo final del bono y retroalimentación de resultados.</p></div>
+            </div>
+            <div class="callout">
+              Cada incumplimiento relevante deberá tener evidencia o registro para que el proceso sea justo y ordenado.
+            </div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="112" y="72" width="296" height="276" rx="34" fill="white"/>
+              <rect x="148" y="122" width="224" height="42" rx="14" fill="#E7EEF9"/>
+              <rect x="148" y="184" width="94" height="82" rx="18" fill="#CFE0FF"/>
+              <rect x="260" y="184" width="112" height="82" rx="18" fill="#56C8E8" opacity=".75"/>
+              <rect x="148" y="286" width="224" height="20" rx="10" fill="#E7EEF9"/>
+              <circle cx="402" cy="108" r="40" fill="#315FBA"/>
+              <path d="M382 108l13 13 28-34" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Reglas de comunicación</div>
+                <h2>Retroalimentación clara durante el mes</h2>
+              </div>
+              <div class="slide-number">14 / 16</div>
+            </div>
+            <p class="body">
+              Cuando exista un incumplimiento, se avisará de forma clara para que la persona sepa qué pasó, qué categoría afecta y cómo evitarlo en el futuro.
+            </p>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div><h3>Se detecta el punto</h3><p class="mini">Por revisión, evidencia, auditoría, queja, registro o seguimiento.</p></div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div><h3>Se comunica</h3><p class="mini">Se informa la categoría afectada y el motivo de forma objetiva.</p></div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div><h3>Se registra</h3><p class="mini">El evento queda documentado para el cálculo final del bono.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="88" y="104" width="344" height="210" rx="36" fill="white"/>
+              <path d="M128 162h188" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <path d="M128 212h248" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <path d="M128 262h152" stroke="#E7EEF9" stroke-width="16" stroke-linecap="round"/>
+              <circle cx="382" cy="146" r="36" fill="#56C8E8"/>
+              <path d="M367 146h30M382 131v30" stroke="white" stroke-width="10" stroke-linecap="round"/>
+              <path d="M184 314l-34 48 92-48" fill="white"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="card">
+        <div class="card-inner">
+          <div>
+            <div class="title-row">
+              <div>
+                <div class="eyebrow">Qué esperamos del equipo</div>
+                <h2>Acciones simples para conservar el bono</h2>
+              </div>
+              <div class="slide-number">15 / 16</div>
+            </div>
+            <div class="category-list">
+              <div class="category"><div class="icon">✅</div><div><h4>Cuidar la presentación diaria</h4><p>Uniforme, limpieza e imagen profesional.</p></div><div class="weight">01</div></div>
+              <div class="category"><div class="icon">📁</div><div><h4>Registrar todo correctamente</h4><p>No dejar expedientes, notas o controles incompletos.</p></div><div class="weight">02</div></div>
+              <div class="category"><div class="icon">⭐</div><div><h4>Apoyar con reseñas</h4><p>Mantener activo el hábito de pedir calificaciones a pacientes satisfechos.</p></div><div class="weight">03</div></div>
+              <div class="category"><div class="icon">🤝</div><div><h4>Trabajar en equipo</h4><p>Ayudar, resolver y comunicar pendientes a tiempo.</p></div><div class="weight">04</div></div>
+              <div class="category"><div class="icon">💙</div><div><h4>Dar excelente atención</h4><p>Cuidar el trato, la comunicación y el seguimiento al paciente.</p></div><div class="weight">05</div></div>
+            </div>
+          </div>
+          <div class="visual">
+            <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="260" cy="210" r="140" fill="white"/>
+              <path d="M196 218l44 44 92-112" stroke="#36B37E" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="150" cy="110" r="28" fill="#56C8E8" opacity=".8"/>
+              <circle cx="396" cy="300" r="42" fill="#7AA7FF" opacity=".45"/>
+              <circle cx="384" cy="118" r="18" fill="#315FBA" opacity=".6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="card">
+        <div class="card-inner center-only">
+          <div class="closing">
+            <div class="logo-large">✦</div>
+            <div class="eyebrow" style="margin-left:auto;margin-right:auto">Cierre</div>
+            <h2 style="margin-left:auto;margin-right:auto">El bono es una herramienta para crecer juntos</h2>
+            <p class="lead">
+              Este sistema busca reconocer el esfuerzo, mejorar la operación y mantener el nivel de servicio que queremos ofrecer en Clínica Hiperbárica Colibrí.
+            </p>
+            <div class="quote">
+              Más orden, mejor servicio y mejores resultados para todos.
+            </div>
+            <div class="pill-row" style="justify-content:center">
+              <span class="pill">💙 Compromiso</span>
+              <span class="pill">📋 Disciplina</span>
+              <span class="pill">⭐ Excelencia</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-note"><span>Gracias por su compromiso</span><span>16 / 16</span></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const progress = document.getElementById('progress');
+    function updateProgress(){
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = height > 0 ? (scrollTop / height) * 100 : 0;
+      progress.style.width = pct + '%';
+    }
+    window.addEventListener('scroll', updateProgress);
+    updateProgress();
+  </script>
+</body>
+</html>
